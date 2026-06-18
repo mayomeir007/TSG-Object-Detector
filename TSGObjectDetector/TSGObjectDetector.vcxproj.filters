@@ -14,6 +14,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Annotator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -35,6 +38,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Annotator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Config.h">

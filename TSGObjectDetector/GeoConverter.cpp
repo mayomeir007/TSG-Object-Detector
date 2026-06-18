@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "GeoConverter.h"
-#define _USE_MATH_DEFINES
 #include <cmath>
 
 GeoCoord GeoConverter::toLatLon(int px_x, int px_y, GeoCoord top_left, double meters_per_pixel) {

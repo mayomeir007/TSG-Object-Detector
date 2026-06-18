@@ -51,7 +51,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\Libraries\OpenCV\include;$(ProjectDir)..\Libraries\cpp-httplib;$(ProjectDir)..\Libraries\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\Libraries\OpenCV\include;$(ProjectDir)..\Libraries\cpp-httplib;$(ProjectDir)..\Libraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -74,7 +74,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\Libraries\OpenCV\include;$(ProjectDir)..\Libraries\cpp-httplib;$(ProjectDir)..\Libraries\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\Libraries\OpenCV\include;$(ProjectDir)..\Libraries\cpp-httplib;$(ProjectDir)..\Libraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -90,6 +90,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Annotator.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Detector.h" />
     <ClInclude Include="GeoConverter.h" />
@@ -99,6 +100,7 @@
     <ClInclude Include="types.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Annotator.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Detector.cpp" />
     <ClCompile Include="GeoConverter.cpp" />
