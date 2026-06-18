@@ -3,6 +3,7 @@
 #include "Detector.h"
 #include "GeoConverter.h"
 #include "JsonBuilder.h"
+#include "Annotator.h"
 #include <httplib.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
@@ -12,7 +13,9 @@ Server::Server(const AppConfig& cfg) : m_cfg(cfg) {}
 void Server::run() {
     httplib::Server svr;
 
-    svr.Post("/detect", [](const httplib::Request& req, httplib::Response& res) {
+    const std::string& save_dir = m_cfg.save_dir;
+
+    svr.Post("/detect", [&save_dir](const httplib::Request& req, httplib::Response& res) {
         // Validate required fields
         if (!req.has_file("image") || !req.has_file("lat") ||
             !req.has_file("lon") || !req.has_file("mpp")) {
@@ -52,6 +55,12 @@ void Server::run() {
             int cy = box.y + box.h / 2;
             GeoCoord loc = GeoConverter::toLatLon(cx, cy, top_left, mpp);
             detections.push_back({ id++, box, loc });
+        }
+
+        if (!save_dir.empty()) {
+            std::string out = Annotator::save(mat, detections, save_dir);
+            if (!out.empty())
+                std::cout << "[TSG] Annotated image saved to: " << out << "\n";
         }
 
         std::string json = JsonBuilder::buildJson(detections);
