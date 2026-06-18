@@ -4,6 +4,7 @@
 #include <iostream>
 
 int main(int argc, char* argv[]) {
+    cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_WARNING);
     AppConfig cfg = Config::load("config.ini");
 
     for (int i = 1; i < argc; ++i) {
