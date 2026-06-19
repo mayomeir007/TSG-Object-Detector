@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Config.h"
+#include "Detector.h"
 #include "Server.h"
 #include <iostream>
 
@@ -15,6 +16,8 @@ int main(int argc, char* argv[]) {
             std::cerr << "[TSG] WARNING: Unknown argument: " << arg << "\n";
         }
     }
+
+    Detector::init(cfg);
 
     std::cout << "[TSG] Server listening on " << cfg.host << ":" << cfg.port << "\n";
     if (!cfg.save_dir.empty())
