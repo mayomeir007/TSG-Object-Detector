@@ -1,0 +1,141 @@
+<svg viewBox="0 0 920 780" xmlns="http://www.w3.org/2000/svg" font-family="monospace, sans-serif" font-size="12">
+  <title>TSG Object Detector — Component Architecture</title>
+  <desc>Diagram showing all components and data flow after ONNX Runtime swap and Annotator addition</desc>
+
+  <!-- Background -->
+  <rect width="920" height="780" fill="#f7f7f8"/>
+
+  <!-- Title -->
+  <text x="460" y="36" text-anchor="middle" font-size="15" font-weight="bold" fill="#111">TSG Object Detector — Component Architecture</text>
+
+  <!-- Layer Labels -->
+  <text x="18" y="108" font-size="10" fill="#888" font-weight="bold">CLIENT</text>
+  <text x="18" y="248" font-size="10" fill="#888" font-weight="bold">SERVER</text>
+  <text x="18" y="398" font-size="10" fill="#888" font-weight="bold">CORE</text>
+  <text x="18" y="578" font-size="10" fill="#888" font-weight="bold">OUTPUT</text>
+
+  <!-- Horizontal Dividers -->
+  <line x1="70" y1="140" x2="890" y2="140" stroke="#ddd" stroke-width="1" stroke-dasharray="4,4"/>
+  <line x1="70" y1="300" x2="890" y2="300" stroke="#ddd" stroke-width="1" stroke-dasharray="4,4"/>
+  <line x1="70" y1="510" x2="890" y2="510" stroke="#ddd" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- 1. CLIENT -->
+  <rect x="330" y="60" width="240" height="64" rx="6" fill="#e8e8ec" stroke="#bbb" stroke-width="1.5"/>
+  <text x="450" y="84" text-anchor="middle" font-weight="bold" fill="#111">HTTP Client</text>
+  <text x="450" y="100" text-anchor="middle" fill="#555" font-size="11">curl / Postman / browser</text>
+  <text x="450" y="116" text-anchor="middle" fill="#888" font-size="10">IN: multipart POST  |  OUT: JSON response</text>
+
+  <!-- 2. HTTP SERVER -->
+  <rect x="220" y="160" width="460" height="120" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="450" y="182" text-anchor="middle" font-weight="bold" fill="#1e40af">HTTP Server</text>
+  <text x="450" y="198" text-anchor="middle" fill="#1e3a8a" font-size="11">cpp-httplib  ·  POST /detect</text>
+  <rect x="238" y="208" width="185" height="58" rx="4" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="330" y="226" text-anchor="middle" font-size="11" font-weight="bold" fill="#1e40af">Request Parser</text>
+  <text x="330" y="241" text-anchor="middle" font-size="10" fill="#1e3a8a">reads image bytes,</text>
+  <text x="330" y="254" text-anchor="middle" font-size="10" fill="#1e3a8a">lat / lon / mpp</text>
+  <text x="330" y="263" text-anchor="middle" font-size="10" fill="#1e3a8a">→ 400 if missing/invalid</text>
+  <rect x="437" y="208" width="225" height="58" rx="4" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="549" y="226" text-anchor="middle" font-size="11" font-weight="bold" fill="#1e40af">Response Serializer</text>
+  <text x="549" y="241" text-anchor="middle" font-size="10" fill="#1e3a8a">builds JSON array,</text>
+  <text x="549" y="254" text-anchor="middle" font-size="10" fill="#1e3a8a">sets Content-Type: application/json</text>
+
+  <!-- 3a. DETECTOR -->
+  <rect x="80" y="320" width="300" height="168" rx="6" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+  <text x="230" y="342" text-anchor="middle" font-weight="bold" fill="#14532d">Building Detector</text>
+  <text x="230" y="358" text-anchor="middle" fill="#166534" font-size="11">ONNX Runtime  ·  YOLOv8</text>
+  <text x="96" y="378" font-size="10" fill="#166534">IN:  cv::Mat image</text>
+  <text x="96" y="392" font-size="10" fill="#166534">OUT: vector&lt;BoundingBox&gt;</text>
+  <line x1="96" y1="399" x2="364" y2="399" stroke="#86efac" stroke-width="1"/>
+  <text x="96" y="414" font-size="10" fill="#166534">1. Letterbox → 640×640</text>
+  <text x="96" y="428" font-size="10" fill="#166534">2. BGR→RGB, normalise, CHW tensor</text>
+  <text x="96" y="442" font-size="10" fill="#166534">3. ORT session.Run()</text>
+  <text x="96" y="456" font-size="10" fill="#166534">4. Score filter + NMS (cv::dnn)</text>
+  <text x="96" y="470" font-size="10" fill="#166534">5. Map back to original coords</text>
+
+  <!-- ONNX Model badge -->
+  <rect x="96" y="478" width="268" height="18" rx="3" fill="#bbf7d0" stroke="#86efac" stroke-width="1"/>
+  <text x="230" y="491" text-anchor="middle" font-size="10" fill="#14532d" font-weight="bold">Models/building_detector.onnx  (~12 MB, committed)</text>
+
+  <!-- 3b. GEO CONVERTER -->
+  <rect x="510" y="320" width="270" height="130" rx="6" fill="#fef9c3" stroke="#fde047" stroke-width="1.5"/>
+  <text x="645" y="342" text-anchor="middle" font-weight="bold" fill="#713f12">Geo Converter</text>
+  <text x="645" y="358" text-anchor="middle" fill="#78350f" font-size="11">pixel → lat/lon math</text>
+  <text x="526" y="378" font-size="10" fill="#78350f">IN:  BoundingBox (px), lat₀, lon₀, m/px</text>
+  <text x="526" y="392" font-size="10" fill="#78350f">OUT: latitude, longitude (center)</text>
+  <line x1="526" y1="399" x2="764" y2="399" stroke="#fde047" stroke-width="1"/>
+  <text x="526" y="414" font-size="10" fill="#78350f">Δlat = (py_c × m/px) / 111320</text>
+  <text x="526" y="428" font-size="10" fill="#78350f">Δlon = (px_c × m/px) /</text>
+  <text x="526" y="441" font-size="10" fill="#78350f">       (111320 × cos(lat₀))</text>
+
+  <!-- 4. JSON BUILDER -->
+  <rect x="290" y="530" width="260" height="80" rx="6" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1.5"/>
+  <text x="420" y="552" text-anchor="middle" font-weight="bold" fill="#831843">JSON Builder</text>
+  <text x="420" y="568" text-anchor="middle" fill="#9d174d" font-size="11">nlohmann/json</text>
+  <text x="306" y="586" font-size="10" fill="#9d174d">IN:  vector&lt;DetectionResult&gt;</text>
+  <text x="306" y="600" font-size="10" fill="#9d174d">OUT: JSON string  [ { object_id,</text>
+  <text x="306" y="612" font-size="10" fill="#9d174d">     bounding_box, location } ]</text>
+
+  <!-- 5. ANNOTATOR -->
+  <rect x="610" y="530" width="255" height="100" rx="6" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1.5"/>
+  <text x="737" y="552" text-anchor="middle" font-weight="bold" fill="#4c1d95">Annotator</text>
+  <text x="737" y="568" text-anchor="middle" fill="#5b21b6" font-size="11">OpenCV  ·  optional</text>
+  <text x="626" y="586" font-size="10" fill="#5b21b6">IN:  cv::Mat, vector&lt;DetectionResult&gt;,</text>
+  <text x="626" y="599" font-size="10" fill="#5b21b6">     save_dir (from --save-dir flag)</text>
+  <text x="626" y="613" font-size="10" fill="#5b21b6">OUT: annotated_&lt;timestamp&gt;.jpg on disk</text>
+  <text x="626" y="626" font-size="10" fill="#5b21b6">     (skipped if save_dir is empty)</text>
+
+  <!-- SHARED DATA STRUCTURES -->
+  <rect x="80" y="650" width="760" height="100" rx="6" fill="#ececf0" stroke="#ccc" stroke-width="1.2"/>
+  <text x="460" y="670" text-anchor="middle" font-weight="bold" fill="#111">Shared Data Structures  (types.h)</text>
+  <text x="460" y="689" text-anchor="middle" font-size="11" fill="#555">BoundingBox { int x, y, w, h }     GeoCoord { double lat, lon }     DetectionResult { int id, BoundingBox, GeoCoord }</text>
+  <text x="460" y="707" text-anchor="middle" font-size="10" fill="#888">RequestParams { string image_path, GeoCoord top_left, double meters_per_pixel }</text>
+  <text x="460" y="727" text-anchor="middle" font-size="10" fill="#888">AppConfig { string host, model_path, save_dir · int port, building_class · float conf_threshold, nms_threshold }</text>
+  <text x="460" y="743" text-anchor="middle" font-size="10" fill="#666" font-style="italic">passed between all components above</text>
+
+  <!-- Arrowhead marker -->
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#666"/>
+    </marker>
+    <marker id="arr-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#7c3aed"/>
+    </marker>
+  </defs>
+
+  <!-- Client → Server -->
+  <line x1="450" y1="124" x2="450" y2="158" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="458" y="146" font-size="10" fill="#666">HTTP POST</text>
+
+  <!-- Server → Detector -->
+  <path d="M310 248 Q200 248 200 320" stroke="#666" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="114" y="292" font-size="10" fill="#666">cv::Mat</text>
+
+  <!-- Server → GeoConverter -->
+  <path d="M590 248 Q700 248 700 320" stroke="#666" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="638" y="292" font-size="10" fill="#666">params</text>
+
+  <!-- Detector → JSON Builder -->
+  <path d="M230 490 Q230 516 330 530" stroke="#666" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="194" y="516" font-size="10" fill="#666">bboxes</text>
+
+  <!-- GeoConverter → JSON Builder -->
+  <path d="M600 420 Q500 420 500 530" stroke="#666" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="506" y="484" font-size="10" fill="#666">coords</text>
+
+  <!-- Server → Annotator (dashed, optional path) -->
+  <path d="M660 268 Q820 268 820 530" stroke="#7c3aed" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arr-purple)"/>
+  <text x="828" y="400" font-size="10" fill="#7c3aed" transform="rotate(90,828,400)">cv::Mat + detections</text>
+
+  <!-- JSON Builder → Server response (dashed) -->
+  <path d="M550 542 Q760 542 760 280 Q760 248 680 248" stroke="#666" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <text x="768" y="400" font-size="10" fill="#666" transform="rotate(90,768,400)">JSON string</text>
+
+  <!-- Server → Client response (dashed) -->
+  <path d="M520 160 Q520 136 530 124" stroke="#666" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+
+  <!-- Shared structs connector -->
+  <line x1="460" y1="642" x2="460" y2="650" stroke="#aaa" stroke-width="1" stroke-dasharray="3,2"/>
+
+  <!-- Annotator → disk label -->
+  <text x="680" y="644" font-size="10" fill="#7c3aed" font-style="italic">→ .jpg file on disk</text>
+</svg>
