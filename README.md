@@ -34,10 +34,6 @@ Post-build events automatically copy the following to the output directory:
 
 The YOLOv8 ONNX model is included in the repository at `Models/building_detector.onnx`.
 
-Expected model I/O format (standard YOLOv8 ONNX export):
-- Input: `[1, 3, 640, 640]` — RGB, normalized 0–1, CHW layout
-- Output: `[1, 4 + num_classes, 8400]` — `cx, cy, w, h` + per-class scores
-
 To swap in a different model, replace the file path in `config.ini` under `[detector]`.
 
 ## Run
