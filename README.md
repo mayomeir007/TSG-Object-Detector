@@ -114,4 +114,4 @@ building_class = 0
 | cpp-httplib | 0.15.x | `Libraries/cpp-httplib/httplib.h` |
 | nlohmann/json | 3.11.x | `Libraries/nlohmann/json.hpp` |
 
-> **ONNX Runtime** headers and binaries are not committed to this repository due to size. Download `onnxruntime-win-x64-*.zip` from the [ONNX Runtime releases page](https://github.com/microsoft/onnxruntime/releases) and extract into `Libraries/ONNXRuntime/` with the structure `include/`, `lib/`, `bin/`.
+> **ONNX Runtime** — the headers and `.lib` are committed, but `onnxruntime.dll` is excluded by `.gitignore`. Before building, download `onnxruntime-win-x64-*.zip` from the [ONNX Runtime releases page](https://github.com/microsoft/onnxruntime/releases) and copy `onnxruntime.dll` from its `bin/` folder into `Libraries/ONNXRuntime/bin/`. That is the only file not in the repository.
