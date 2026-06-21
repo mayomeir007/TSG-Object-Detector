@@ -4,11 +4,27 @@ C++ HTTP server that accepts an aerial/satellite image with geographic metadata,
 
 ## Build
 
-**Prerequisites:** Visual Studio 2022 (v143 toolset), Windows x64.
+**Prerequisites:** Windows x64, MSVC v143 toolset (Visual Studio 2022 or Build Tools 2022).
 
-1. Open `TSGObjectDetector.sln` in Visual Studio 2022.
+Before building, vendor the ONNX Runtime (see [Libraries](#libraries-vendored) below).
+
+### Option A — Visual Studio 2022 (with IDE)
+
+1. Open `TSGObjectDetector.sln`.
 2. Select **Debug|x64** or **Release|x64**.
 3. Build → Build Solution (`Ctrl+Shift+B`).
+
+### Option B — Visual Studio Build Tools 2022 (command-line, no IDE)
+
+A lighter alternative (~4 GB vs ~8 GB). Install [Build Tools for Visual Studio 2022](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022), selecting the **Desktop development with C++** workload, then from a **Developer Command Prompt for VS 2022**:
+
+```bat
+msbuild TSGObjectDetector.sln /p:Configuration=Debug /p:Platform=x64
+```
+
+Replace `Debug` with `Release` for a release build.
+
+---
 
 Post-build events automatically copy the following to the output directory:
 - `opencv_world452d.dll` / `opencv_world452.dll`
