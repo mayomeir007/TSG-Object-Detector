@@ -12,6 +12,8 @@ int main(int argc, char* argv[]) {
         std::string arg = argv[i];
         if (arg == "--save-dir" && i + 1 < argc) {
             cfg.save_dir = argv[++i];
+        } else if (arg.rfind("--save-dir=", 0) == 0) {
+            cfg.save_dir = arg.substr(11);
         } else {
             std::cerr << "[TSG] WARNING: Unknown argument: " << arg << "\n";
         }
