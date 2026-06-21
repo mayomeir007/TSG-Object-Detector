@@ -6,8 +6,6 @@ C++ HTTP server that accepts an aerial/satellite image with geographic metadata,
 
 **Prerequisites:** Windows x64, MSVC v143 toolset (Visual Studio 2022 or Build Tools 2022).
 
-Before building, vendor the ONNX Runtime (see [Libraries](#libraries-vendored) below).
-
 ### Option A — Visual Studio 2022 (with IDE)
 
 1. Open `TSGObjectDetector.sln`.
@@ -110,8 +108,11 @@ building_class = 0
 | Library | Version | Location |
 |---|---|---|
 | OpenCV | 4.5.2 | `Libraries/OpenCV/` |
-| ONNX Runtime | (downloaded separately) | `Libraries/ONNXRuntime/` |
+| ONNX Runtime | 1.26.x | `Libraries/ONNXRuntime/` |
 | cpp-httplib | 0.15.x | `Libraries/cpp-httplib/httplib.h` |
 | nlohmann/json | 3.11.x | `Libraries/nlohmann/json.hpp` |
 
-> **ONNX Runtime** — the headers and `.lib` are committed (API version 26, i.e. ORT **1.26.x**), but `onnxruntime.dll` is excluded by `.gitignore`. Before building, download **`onnxruntime-win-x64-1.26.x.zip`** (where x is the latest 1.26 patch) from the [ONNX Runtime releases page](https://github.com/microsoft/onnxruntime/releases) and copy `onnxruntime.dll` from its `bin/` folder into `Libraries/ONNXRuntime/bin/`. **The DLL version must match the committed headers — using a different major.minor (e.g. 1.17.1) will cause an API version error at startup.**
+> **OpenCV** — headers and `.lib` are committed, but the DLLs (`opencv_world452.dll` / `opencv_world452d.dll`) exceed GitHub's file size limit (~800 MB each) and are excluded from the repository. Download [OpenCV 4.5.2 for Windows](https://github.com/opencv/opencv/releases/tag/4.5.2), extract, and copy both DLLs from `build\x64\vc14\bin\` into `Libraries/OpenCV/bin/`.
+
+> **ONNX Runtime** — fully committed including `onnxruntime.dll` (1.26.x). No manual step needed.
+

@@ -26,5 +26,6 @@ ipch/
 
 # Keep vendored libraries
 !Libraries/**/*.lib
+!Libraries/ONNXRuntime/**/*.dll
 !Libraries/**/*.h
 !Libraries/**/*.hpp
