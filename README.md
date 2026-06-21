@@ -32,7 +32,7 @@ Post-build events automatically copy the following to the output directory:
 
 ## Model
 
-The YOLOv8 ONNX model is included in the repository at `Models/building_detector.onnx` (~12 MB). No separate download is needed — it is committed directly to git.
+The YOLOv8 ONNX model is included in the repository at `Models/building_detector.onnx`.
 
 Expected model I/O format (standard YOLOv8 ONNX export):
 - Input: `[1, 3, 640, 640]` — RGB, normalized 0–1, CHW layout
