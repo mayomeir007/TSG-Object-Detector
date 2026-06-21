@@ -114,4 +114,4 @@ building_class = 0
 | cpp-httplib | 0.15.x | `Libraries/cpp-httplib/httplib.h` |
 | nlohmann/json | 3.11.x | `Libraries/nlohmann/json.hpp` |
 
-> **ONNX Runtime** — the headers and `.lib` are committed, but `onnxruntime.dll` is excluded by `.gitignore`. Before building, download `onnxruntime-win-x64-*.zip` from the [ONNX Runtime releases page](https://github.com/microsoft/onnxruntime/releases) and copy `onnxruntime.dll` from its `bin/` folder into `Libraries/ONNXRuntime/bin/`. That is the only file not in the repository.
+> **ONNX Runtime** — the headers and `.lib` are committed (API version 26, i.e. ORT **1.26.x**), but `onnxruntime.dll` is excluded by `.gitignore`. Before building, download **`onnxruntime-win-x64-1.26.x.zip`** (where x is the latest 1.26 patch) from the [ONNX Runtime releases page](https://github.com/microsoft/onnxruntime/releases) and copy `onnxruntime.dll` from its `bin/` folder into `Libraries/ONNXRuntime/bin/`. **The DLL version must match the committed headers — using a different major.minor (e.g. 1.17.1) will cause an API version error at startup.**
